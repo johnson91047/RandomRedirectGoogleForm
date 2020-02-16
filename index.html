@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-app.js"></script>
+
     <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCOZEE8Q7lkClwEl9Qwv57YkSd6g8zoFio",
+            authDomain: "redirectcounter.firebaseapp.com",
+            databaseURL: "https://redirectcounter.firebaseio.com",
+            projectId: "redirectcounter",
+            storageBucket: "redirectcounter.appspot.com",
+            messagingSenderId: "913532184722",
+            appId: "1:913532184722:web:b5c1562360097c48e11e4b"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const AddFormCount = (name) => {
+            let ref = firebase.database().ref(`redirectcounter/${name}`);
+            ref.transaction(function(value) {
+            return (value || 0) + 1;
+            });
+        };
+
         let webpages = [];
         //---------------just change the webpage URLs
         //the webpages need to hosted on https sites - if you want more than two just create a new line using the same code as below
@@ -10,6 +33,9 @@
         //------------------------------------------
         let random_page = Math.floor(Math.random()*webpages.length);
         let redirect = webpages[random_page];
+        let form_name = `Form${random_page}`;
+
+        AddFormCount(form_name)
         window.location.href = redirect;
     </script>
 </html>
