@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-app.js"></script>
+    <body>
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase.js"></script>
 
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyCOZEE8Q7lkClwEl9Qwv57YkSd6g8zoFio",
-            authDomain: "redirectcounter.firebaseapp.com",
-            databaseURL: "https://redirectcounter.firebaseio.com",
-            projectId: "redirectcounter",
-            storageBucket: "redirectcounter.appspot.com",
-            messagingSenderId: "913532184722",
-            appId: "1:913532184722:web:b5c1562360097c48e11e4b"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        <script>
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: "AIzaSyCOZEE8Q7lkClwEl9Qwv57YkSd6g8zoFio",
+                authDomain: "redirectcounter.firebaseapp.com",
+                databaseURL: "https://redirectcounter.firebaseio.com",
+                projectId: "redirectcounter",
+                storageBucket: "redirectcounter.appspot.com",
+                messagingSenderId: "913532184722",
+                appId: "1:913532184722:web:b5c1562360097c48e11e4b"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
 
-        const AddFormCount = (name) => {
-            let ref = firebase.database().ref(`redirectcounter/${name}`);
+            let webpages = [];
+            //---------------just change the webpage URLs
+            //the webpages need to hosted on https sites - if you want more than two just create a new line using the same code as below
+            //just change the link to the google form
+            webpages.push("https://docs.google.com/forms/d/e/1FAIpQLSeRjLpD1xyLk2SxQLFWEzsCyfL94dztnfmJSqAM12Nw69Dmsw/viewform?usp=sf_link");
+            webpages.push("https://docs.google.com/forms/d/e/1FAIpQLSdkGoxZ3qJGNXJHexrj7C5X5PUhTf3-ZNmUDOaAp00_cO9--A/viewform?usp=sf_link");
+            //------------------------------------------
+            let random_page = Math.floor(Math.random()*webpages.length);
+            let redirect = webpages[random_page];
+            console.log(`Form${random_page + 1}`);
+
+            let ref = firebase.database().ref(`/Form${random_page + 1}`);
             ref.transaction(function(value) {
-            return (value || 0) + 1;
+                return (value || 0) + 1;
             });
-        };
 
-        let webpages = [];
-        //---------------just change the webpage URLs
-        //the webpages need to hosted on https sites - if you want more than two just create a new line using the same code as below
-        //just change the link to the google form
-        webpages.push("https://docs.google.com/forms/d/e/1FAIpQLSeRjLpD1xyLk2SxQLFWEzsCyfL94dztnfmJSqAM12Nw69Dmsw/viewform?usp=sf_link");
-        webpages.push("https://docs.google.com/forms/d/e/1FAIpQLSdkGoxZ3qJGNXJHexrj7C5X5PUhTf3-ZNmUDOaAp00_cO9--A/viewform?usp=sf_link");
-        //------------------------------------------
-        let random_page = Math.floor(Math.random()*webpages.length);
-        let redirect = webpages[random_page];
-        let form_name = `Form${random_page}`;
-
-        AddFormCount(form_name)
-        window.location.href = redirect;
-    </script>
+            setTimeout(function(){window.location.href = redirect;}, 1000)
+        </script>
+    </body>
 </html>
