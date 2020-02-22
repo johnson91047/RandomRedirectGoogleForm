@@ -1,6 +1,110 @@
 <!DOCTYPE html>
 <html>
     <body>
-       <h1> Story </h1>
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase.js"></script>
+
+        <script>
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: "AIzaSyCOZEE8Q7lkClwEl9Qwv57YkSd6g8zoFio",
+                authDomain: "redirectcounter.firebaseapp.com",
+                databaseURL: "https://redirectcounter.firebaseio.com",
+                projectId: "redirectcounter",
+                storageBucket: "redirectcounter.appspot.com",
+                messagingSenderId: "913532184722",
+                appId: "1:913532184722:web:b5c1562360097c48e11e4b"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            let webpages = [];
+            webpages.push("https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODQ1NDI3OTY1OTc5NTMw?igshid=4ualtv0vrddt&story_media_id=2245062122203512102");
+            webpages.push("https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODU1OTA1NzUzNzg3MDU5?igshid=whhevgowx21a&story_media_id=2245074977609302302");
+
+            let database = firebase.database();
+            let random_page = Math.floor(Math.random()*webpages.length);
+            let redirect = '';
+
+            let limit = 0;
+            let certain_count = 0;
+            let uncertain_count = 0;
+            let root_ref = database.ref(`/`)
+            let certain_ref = root_ref.child('StoryCertain')
+            let uncertain_ref = root_ref.child('StoryUncertain')
+
+            let get_random_page = function()
+            {
+                redirect = webpages[random_page]
+                
+                switch(random_page)
+                {
+                    case 0:
+                        let certain_ref = root_ref.child(`StoryCertain`)
+                        certain_ref.transaction(function(value) {
+                            return (value || 0) + 1;
+                        });
+                        break;
+                    case 1:
+                        let uncertain_ref = root_ref.child(`StoryUncertain`)
+                        uncertain_ref.transaction(function(value) {
+                            return (value || 0) + 1;
+                        });
+                        break;
+                }
+            }
+
+            root_ref.once('value').then(function(snapshot){
+                let use_certain = true;
+                let use_uncertain = true;
+
+                limit = snapshot.val().Limit
+                certain_count = snapshot.val().StoryCertain
+                uncertain_count = snapshot.val().StoryUncertain
+
+                use_certain = certain_count < limit;
+                use_uncertain = uncertain_count < limit;
+
+                if( (use_certain && use_uncertain) || (!use_certain && !use_uncertain) )
+                {
+                    get_random_page()
+                    console.log('random')
+                    setTimeout(function(){window.location.href = redirect;}, 100)
+
+                }else if(use_certain)
+                {
+                    redirect = webpages[0]
+
+                    certain_ref.transaction(function(value) {
+                        return (value || 0) + 1;
+                    },function(error, committed, snapshot) {
+                        if (error) {
+                            alert('error')
+                        } else if (!committed) {
+                            console.log('We aborted the transaction (because ada already exists).');
+                        } else {
+                            console.log('use_certain')
+                            setTimeout(function(){window.location.href = redirect;}, 100)
+                        }
+                    });
+                    
+                }else if(use_uncertain){
+                    redirect = webpages[1]
+
+                    uncertain_ref.transaction(function(value) {
+                        return (value || 0) + 1;
+                    },function(error, committed, snapshot) {
+                        if (error) {
+                            alert('error')
+                        } else if (!committed) {
+                            console.log('We aborted the transaction (because ada already exists).');
+                        } else {
+                            console.log('use_uncertain')
+                            setTimeout(function(){window.location.href = redirect;}, 100)
+                        }
+                    });
+                }
+            });
+        </script>
     </body>
 </html>
